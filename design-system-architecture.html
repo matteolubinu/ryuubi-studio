@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SwiftUI Design System and CloudKit Architecture | Ryuubi Studio</title>
+<meta name="description" content="An AI skill and template for a token-based SwiftUI design system and a SwiftData and CloudKit schema that doesn't stall sync in production. With real excerpts from Quillino, a published iOS app.">
+<link rel="canonical" href="https://matteolubinu.github.io/ryuubi-studio/design-system-architecture.html">
+<meta property="og:url" content="https://matteolubinu.github.io/ryuubi-studio/design-system-architecture.html">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:site_name" content="Ryuubi Studio">
+<meta property="og:title" content="SwiftUI Design System and CloudKit Architecture">
+<meta property="og:description" content="An AI skill and template for a token-based SwiftUI design system and a SwiftData and CloudKit schema that doesn't stall sync in production. With real excerpts from Quillino, a published iOS app.">
+<meta property="og:type" content="product">
+<meta property="og:image" content="https://matteolubinu.github.io/ryuubi-studio/assets/og-image.png">
+<meta property="og:image:alt" content="Ryuubi Studio: real methods, from real apps.">
+<meta name="twitter:card" content="summary_large_image">
+<script>document.documentElement.classList.add("js");</script>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css?v=1789811123">
+<script src="site.js?v=1789811123" defer></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Product", "name": "Design system and architecture", "description": "An AI skill and template for a token-based SwiftUI design system and a SwiftData and CloudKit schema that doesn't stall sync in production. With real excerpts from Quillino, a published iOS app.", "brand": {"@type": "Brand", "name": "Ryuubi Studio"}, "image": "https://matteolubinu.github.io/ryuubi-studio/assets/og-image.png", "offers": {"@type": "Offer", "price": "9.99", "priceCurrency": "EUR", "availability": "https://schema.org/InStock", "itemCondition": "https://schema.org/NewCondition", "url": "https://matteolubinu.github.io/ryuubi-studio/design-system-architecture.html", "shippingDetails": {"@type": "OfferShippingDetails", "shippingRate": {"@type": "MonetaryAmount", "value": "0", "currency": "EUR"}, "shippingDestination": {"@type": "DefinedRegion", "addressCountry": ["IT", "DE", "FR", "ES", "NL", "BE", "AT", "IE", "PT", "SE", "DK", "FI", "PL", "CH", "GB", "US", "CA", "AU"]}, "deliveryTime": {"@type": "ShippingDeliveryTime", "handlingTime": {"@type": "QuantitativeValue", "minValue": 0, "maxValue": 0, "unitCode": "DAY"}, "transitTime": {"@type": "QuantitativeValue", "minValue": 0, "maxValue": 0, "unitCode": "DAY"}}}, "hasMerchantReturnPolicy": {"@type": "MerchantReturnPolicy", "applicableCountry": ["IT", "DE", "FR", "ES", "NL", "BE", "AT", "IE", "PT", "SE", "DK", "FI", "PL", "CH", "GB", "US", "CA", "AU"], "returnPolicyCategory": "https://schema.org/MerchantReturnNotPermitted"}}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="wordmark" href="index.html" aria-label="Ryuubi Studio, home"><span>Ryuubi</span> <span>Studio</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="skills.html">Skills</a>
+      <a href="templates.html">Templates</a>
+      <a href="blog.html">Blog</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<div class="product-top">
+  <div class="wrap product-grid">
+
+    <header class="product-intro">
+      <nav class="crumbs reveal" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><a href="skills.html">Skills</a><span aria-hidden="true">/</span>Design system and architecture</nav>
+      <p class="eyebrow reveal">Skill + template</p>
+      <h1 class="reveal" data-d="1">A consistent design, an architecture that <em>doesn't break silently</em></h1>
+      <p class="lede reveal" data-d="2">A token-based SwiftUI design system and a SwiftData and CloudKit schema that holds up, including the traps you usually find only after hours of debugging. With real excerpts from Quillino and the incident that stalled my sync in production.</p>
+      <ul class="facts reveal" data-d="3">
+        <li><strong>Agent Skills</strong> format</li>
+        <li><strong>6</strong> files, all in <strong>English</strong></li>
+        <li>Deep on <strong>SwiftUI, SwiftData, CloudKit</strong></li>
+      </ul>
+      <div class="works reveal" data-d="3">
+        <span class="works-label">Works with</span>
+        <span class="chip">Any AI assistant</span>
+      </div>
+    </header>
+
+    <aside class="product-aside" aria-label="Buy">
+      <div class="buy-card reveal" data-d="2">
+        <div class="price">€9.99 <small>EUR</small></div>
+        <p class="sub">One-time payment, instant download. Yours to keep.</p>
+        <a class="btn wide" href="https://ryuubistudio.gumroad.com/l/design-system-architecture" data-gumroad="design-system"><span data-label>Buy on Gumroad</span></a>
+        <p class="note">Digital download, no refunds.<br>Not sure it fits? <a class="link" href="mailto:quillino.support@gmail.com?subject=Ryuubi%20Studio">Ask me first</a></p>
+        <p class="note" data-ppp hidden>Prices adjust to your country at checkout.</p>
+        <ul>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 10.5 3.5 3.5 7.5-8"/></svg> Design system method, light and dark contrast</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 10.5 3.5 3.5 7.5-8"/></svg> Audit searches for SwiftUI, UIKit, Compose, web</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 10.5 3.5 3.5 7.5-8"/></svg> CloudKit schema release checklist</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 10.5 3.5 3.5 7.5-8"/></svg> Real excerpts and a real incident</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 10.5 3.5 3.5 7.5-8"/></svg> Design system document template</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 10.5 3.5 3.5 7.5-8"/></svg> Bonus: re-skin mapping and migration plan</li>
+          <li><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m4.5 10.5 3.5 3.5 7.5-8"/></svg> Step-by-step install guide</li>
+        </ul>
+        <a class="bundle-link" href="index.html#bundle"><strong>Get both packs for <span data-bundle-price>€14.99</span></strong><br>with Product research and validation</a>
+      </div>
+    </aside>
+
+    <div class="product-body">
+
+      <section class="block">
+        <div class="prose reveal">
+          <p class="kicker">Why I made it</p>
+          <h2>I learned these rules by <em>breaking things</em></h2>
+          <p><a href="https://apps.apple.com/it/app/quillino-gestione-affitti/id6774200347">Quillino</a> is my app for people who rent out one or a few properties. Native SwiftUI, data in SwiftData, synced to the user's iCloud with CloudKit. Almost every rule in this pack arrived after a mistake.</p>
+          <ul>
+            <li><strong>Sync stalled twice in production</strong>, because of two different fields missing from the CloudKit schema. No crash, no visible error: writes were rejected and retried forever.</li>
+            <li><strong>The second time, the cause wasn't what I thought.</strong> My test seed wrote files of a few bytes, and real files travel on a second field the production schema had never seen. <a href="swiftdata-cloudkit-externalstorage-ckasset.html">Read the full story</a>.</li>
+            <li><strong>The sheet header was copied by hand in about 14 places</strong>, already drifting in padding and trailing actions. Today it's a single component.</li>
+            <li><strong>A secondary text gray measured 3.6:1 on white.</strong> That fails WCAG AA. It's now documented as decorative only.</li>
+          </ul>
+          <p>I wrote it all down so I wouldn't repeat these mistakes on the next app. Then I stripped the private details and made it general.</p>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="reveal">
+          <p class="kicker">How it works</p>
+          <h2>From download to a token you can trust</h2>
+        </div>
+        <ol class="steps">
+          <li class="reveal"><h3>Install it</h3><p>Unzip it. In Claude Code, Cursor, Copilot, Codex or Gemini CLI, install it the way that tool loads skills (folder name has to stay <code>design-system-architecture</code>), then open your project so it can read your code. In ChatGPT or Gemini, paste <code>SKILL.md</code> as instructions.</p></li>
+          <li class="reveal" data-d="1"><h3>Ask for what you need</h3><p>Try: &ldquo;Set up a token-based design system for my SwiftUI app,&rdquo; or &ldquo;audit my code for hardcoded colors and font sizes.&rdquo; It works one step at a time, so you can also ask for just one, like &ldquo;just Step 2, contrast.&rdquo;</p></li>
+          <li class="reveal" data-d="2"><h3>Ship without the CloudKit trap</h3><p>Before a release that touches a synced model, ask: &ldquo;walk me through the CloudKit release checklist.&rdquo; It catches the missing schema field before your users do.</p></li>
+        </ol>
+      </section>
+
+      <section class="block">
+        <div class="reveal">
+          <p class="kicker">What's inside</p>
+          <h2>What's in the zip</h2>
+          <ul class="files">
+            <li><span class="fname">SKILL.md</span><p>The method your AI follows. Part 1, design system: typography that scales with the user's text size, color and WCAG contrast in light and dark mode, spacing and motion, components, navigation containers, glossary, and concrete searches to audit hardcoded values in SwiftUI, UIKit, Compose and web code. Part 2, architecture: deploying a CloudKit schema safely, the schema seeder, the _ckAsset trap, SwiftData + CloudKit constraints, schemaless backends like Firestore, versioning and fast QA.</p></li>
+            <li><span class="fname">references/worked-example.md</span><p>Real excerpts from Quillino's design system (type scale, measured contrast ratios, navigation rules, glossary) and the full story of the CloudKit schema incident.</p></li>
+            <li><span class="fname">references/design-system-doc-template.md</span><p>The document your AI fills in, so the rules live in your project and every new screen follows them.</p></li>
+            <li><span class="fname">references/reskin-mapping.md</span><p>Bonus. How to plan a re-skin without touching logic: a mapping table with three coverage levels, a component migration order and a regression protocol. It comes from migrating about 30 screens.</p></li>
+            <li><span class="fname">README.md + LICENSE.md</span><p>Install guide for skills-enabled tools, chat assistants and use by hand, plus the full license terms.</p></li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="reveal">
+          <p class="kicker">How to use each file</p>
+          <h2>From download to results</h2>
+          <div class="faq usage">
+            <details><summary><code>SKILL.md</code></summary><p><strong>What it is:</strong> the instructions your AI follows. Part 1, design system (Steps 1 to 8). Part 2, data architecture (Steps 9 to 11).</p><p><strong>With a coding agent</strong> (Claude Code, Codex, Cursor, Copilot, Gemini CLI): install the folder and open your project. The agent can run the audit searches and write the token code. Ask, for example, “set up a token-based design system for my app” or “walk me through the release checklist for my CloudKit model change”. If it doesn't start on its own, ask for the design-system-architecture skill by name.</p><p><strong>With ChatGPT or Gemini:</strong> paste the whole file into a custom GPT, Project or Gem, and paste the code you want reviewed.</p><p><strong>By hand:</strong> Part 1 before designing screens, Step 8 for audits, Part 2 before every release that changes a synced model.</p><p><strong>Tip:</strong> you can do one step at a time, for example “just Step 2, contrast”. Skip Part 2 if your app has no sync.</p>
+              <div class="io">
+                <div><span class="io-label">Input</span><p>“Build me a type scale for my SwiftUI app, with a name and a use for each size.”</p></div>
+                <div><span class="io-label">Output (Step 1)</span><table><thead><tr><th>Token</th><th>Size</th><th>Use</th></tr></thead><tbody><tr><td><code>headlineLarge</code></td><td>34pt</td><td>Screen title</td></tr><tr><td><code>labelMedium</code></td><td>13pt</td><td>Status text</td></tr></tbody></table><span class="src">Real table, references/worked-example.md</span></div>
+              </div></details>
+            <details><summary><code>references/worked-example.md</code></summary><p><strong>What it is:</strong> real excerpts from a production design system and the full CloudKit incident.</p><p><strong>How to use it:</strong> read Part 1 before building your token tables, and Part 2 before your next CloudKit model change. Replicate the approach (a specific use per token, a documented limit per failing color), not the exact values.</p>
+              <div class="io">
+                <div><span class="io-label">Input</span><p>“Why did my CloudKit sync stall after I added a photo field?”</p></div>
+                <div><span class="io-label">Output (Part 2, the incident)</span><pre><code>With a small test value (a few bytes),
+the service stores the attribute inline
+in a single field, and the deploy succeeds.
+Real files are large, and above a
+threshold the service stores them in a
+separate _ckAsset field instead.</code></pre></div>
+              </div></details>
+            <details><summary><code>references/design-system-doc-template.md</code></summary><p><strong>What it is:</strong> the design system document the method produces.</p><p><strong>With AI:</strong> “create DESIGN_SYSTEM.md in my project following the template”, then fill it step by step. Keep it in the repository so future screens and future AI sessions follow it.</p><p><strong>By hand:</strong> copy it into your project and fill each table during the matching step.</p>
+              <div class="io">
+                <div><span class="io-label">Input</span><p>Your platform, and the tokens you fixed while going through Part 1.</p></div>
+                <div><span class="io-label">Output</span><pre><code>## Rules that apply everywhere
+- No font size, weight or family set by
+  hand: use a typography token.
+- No color value in views: use a color
+  token.
+- Enforced by: [lint rule / test]</code></pre><span class="src">Real structure, references/design-system-doc-template.md</span></div>
+              </div></details>
+            <details><summary><code>references/reskin-mapping.md</code></summary><p><strong>What it is:</strong> bonus. How to plan a re-skin or migration without touching logic.</p><p><strong>How to use it:</strong> run the audit searches (Step 8), build the mapping table screen by screen, migrate in the listed order and apply the regression protocol to each screen. With a coding agent: “audit my app and build the re-skin mapping table”, then review the table before any code changes.</p>
+              <div class="io">
+                <div><span class="io-label">Input</span><p>“Audit my Home screen and tell me what needs to change for the new design system.”</p></div>
+                <div><span class="io-label">Output</span><table><thead><tr><th>Element</th><th>Component</th><th>Coverage</th></tr></thead><tbody><tr><td>Home, balance card</td><td><code>SummaryCard</code></td><td>🟢</td></tr><tr><td>Payment row</td><td><code>ListRow</code> + <code>StatusBadge</code></td><td>🟡</td></tr></tbody></table><span class="src">Real table, references/reskin-mapping.md</span></div>
+              </div></details>
+            <details><summary><code>README.md and LICENSE.md</code></summary><p><strong>README.md:</strong> installation for every kind of tool, example requests, where to start and this per-file guide. Start here.</p><p><strong>LICENSE.md:</strong> use and adapt the files for your own projects, commercial ones included; don't resell or redistribute them.</p></details>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="reveal">
+          <p class="kicker">A taste</p>
+          <h2>From the pack</h2>
+          <blockquote class="quote">
+            <p>A token exists to be the single source of truth. If a rule can be bypassed by typing a value by hand, sooner or later someone will.</p>
+            <cite>SKILL.md</cite>
+          </blockquote>
+          <div class="table-scroll">
+            <table>
+              <caption class="visually-hidden">Type scale excerpt from the worked example</caption>
+              <thead><tr><th scope="col">Token</th><th scope="col">Size</th><th scope="col">Weight</th><th scope="col">Use</th></tr></thead>
+              <tbody>
+                <tr><td><code>headlineLarge</code></td><td>34pt</td><td>Bold</td><td>Screen title, highlighted number</td></tr>
+                <tr><td><code>titleMedium</code></td><td>17pt</td><td>DemiBold</td><td>Primary text in a card</td></tr>
+                <tr><td><code>labelMedium</code></td><td>13pt</td><td>Medium</td><td>Badges, labels, status text</td></tr>
+                <tr><td><code>labelSmall</code></td><td>12pt</td><td>Medium</td><td>Absolute floor, decorative only</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="reveal">
+          <p class="kicker">Is it for you</p>
+          <h2>Honest fit</h2>
+          <div class="fit">
+            <div><h3>Yes, if</h3><ul><li>you're starting a SwiftUI app and want tokens from day one</li><li>you have an app and the design is drifting</li><li>you use SwiftData with CloudKit, or a similar managed backend</li></ul></div>
+            <div><h3>Not if</h3><ul><li>you want a Figma kit or code to paste: this is method and rules</li><li>you need an up-to-date API reference: check exact thresholds against Apple's current docs</li></ul></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="prose reveal">
+          <p class="kicker">The worked example is real</p>
+          <h2>What I removed, what I kept</h2>
+          <p>None of the competitors I found sell a method backed by a real case you can check. Usually the example is invented to make the method look brilliant.</p>
+          <p>These excerpts come from Quillino's internal documentation, and Quillino is <a href="https://apps.apple.com/it/app/quillino-gestione-affitti/id6774200347">on the App Store</a>. In the files I removed the product name, technical identifiers and references to real people. Tokens, contrast ratios and incident mechanics are the real ones.</p>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="reveal">
+          <p class="kicker">License</p>
+          <div class="license-box">
+            <ul>
+              <li><strong>You can</strong> use and adapt the files for yourself and your own projects, commercial ones included.</li>
+              <li><strong>You can't</strong> redistribute, resell or republish them, in full or in substantial parts, or present them as your own product.</li>
+            </ul>
+            <p class="small">A Markdown file can't be protected technically, so I'm trusting you. <a class="link" href="license.html">Full license</a></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="block">
+        <div class="reveal">
+          <p class="kicker">Questions</p>
+          <div class="faq">
+            <details><summary>Can I get a refund?</summary><p>No. The packs are digital products you download instantly, so there are no refunds. If a file is missing, broken or doesn't match the description, write to <a class="link" href="mailto:quillino.support@gmail.com?subject=Ryuubi%20Studio">quillino.support@gmail.com</a> and it will be fixed.</p></details>
+            <details><summary>Is there Swift code ready to copy?</summary><p>No, on purpose. The pack contains method, rules and real cases. You (or your AI, following the skill) write the code in your project, with your own names and tokens.</p></details>
+            <details><summary>Do I have to use SwiftUI and CloudKit?</summary><p>Part 1 on design systems applies to any platform. Part 2 is written around SwiftData and CloudKit, but the principles (immutable production schema, complete seed, explicit versioning) apply to other managed backends too.</p></details>
+            <details><summary>My app isn't on iOS. Is it still useful?</summary><p>Part 1 works on any platform: the skill shows how tokens map to SwiftUI, UIKit, Jetpack Compose and web, with audit searches for each. Part 2 goes deepest on CloudKit, and has a separate section for schemaless backends like Firestore and for your own API.</p></details>
+            <details><summary>Which AI do I need?</summary><p>It loads as a real skill in Claude, Codex, Cursor, Copilot, Gemini CLI and other tools that support SKILL.md, which is handy since you'll use it while coding. In ChatGPT or Gemini you paste it as instructions. Without AI, it reads as a step-by-step guide.</p></details>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+
+<div class="buybar" aria-hidden="true">
+  <span class="p">€9.99</span>
+  <a class="btn" href="https://ryuubistudio.gumroad.com/l/design-system-architecture" data-gumroad="design-system" tabindex="-1"><span data-label>Buy now</span></a>
+</div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-statement">
+      <h2>Got a question, <br>or found a bug?</h2>
+      <a class="footer-email" href="mailto:quillino.support@gmail.com?subject=Ryuubi%20Studio">quillino.support@gmail.com</a>
+    </div>
+    <nav aria-label="Footer">
+      <a href="skills.html">Skills</a>
+      <a href="templates.html">Templates</a>
+      <a href="blog.html">Blog</a>
+      <a href="license.html">License</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="https://www.etsy.com/shop/RyuubiStudio">Etsy shop</a>
+      <button class="linklike" type="button" data-cookie-settings hidden>Cookie settings</button>
+    </nav>
+  </div>
+</footer>
+
+<div class="consent" data-consent role="dialog" aria-labelledby="consent-title" hidden>
+  <h2 id="consent-title">A quick question</h2>
+  <p>Can I use Google Analytics to count visits? It sets cookies, and it only loads if you say yes. <a class="link" href="privacy.html">Privacy</a></p>
+  <div class="row">
+    <button class="btn ghost" type="button" data-reject>No thanks</button>
+    <button class="btn ghost" type="button" data-accept>Accept</button>
+  </div>
+</div>
+</body>
+</html>

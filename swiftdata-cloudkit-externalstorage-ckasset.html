@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SwiftData, CloudKit and the missing _ckAsset field | Ryuubi Studio</title>
+<meta name="description" content="Why a SwiftData @Attribute(.externalStorage) property needs two fields in the CloudKit Production schema, how a 4-byte test seed hid the second one, and the checklist I use before every TestFlight.">
+<link rel="canonical" href="https://matteolubinu.github.io/ryuubi-studio/swiftdata-cloudkit-externalstorage-ckasset.html">
+<meta property="og:url" content="https://matteolubinu.github.io/ryuubi-studio/swiftdata-cloudkit-externalstorage-ckasset.html">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:site_name" content="Ryuubi Studio">
+<meta property="og:title" content="SwiftData, CloudKit and the missing _ckAsset field">
+<meta property="og:description" content="Why a SwiftData @Attribute(.externalStorage) property needs two fields in the CloudKit Production schema, how a 4-byte test seed hid the second one, and the checklist I use before every TestFlight.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://matteolubinu.github.io/ryuubi-studio/assets/blog/ckasset-01-cover.jpg">
+<meta property="og:image:alt" content="Ryuubi Studio: real methods, from real apps.">
+<meta name="twitter:card" content="summary_large_image">
+<script>document.documentElement.classList.add("js");</script>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="favicon-16.png" sizes="16x16" type="image/png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css?v=1789811123">
+<script src="site.js?v=1789811123" defer></script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "BlogPosting", "headline": "SwiftData, CloudKit and the missing _ckAsset field", "description": "Why a SwiftData @Attribute(.externalStorage) property needs two fields in the CloudKit Production schema, how a 4-byte test seed hid the second one, and the checklist I use before every TestFlight.", "datePublished": "2026-09-16", "image": "https://matteolubinu.github.io/ryuubi-studio/assets/blog/ckasset-01-cover.jpg", "author": {"@type": "Organization", "name": "Ryuubi Studio"}, "publisher": {"@type": "Organization", "name": "Ryuubi Studio"}}</script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="wordmark" href="index.html" aria-label="Ryuubi Studio, home"><span>Ryuubi</span> <span>Studio</span></a>
+    <nav class="nav" aria-label="Main">
+      <a href="skills.html">Skills</a>
+      <a href="templates.html">Templates</a>
+      <a href="blog.html" aria-current="page">Blog</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+<article>
+<header class="article-hero">
+  <div class="wrap">
+    <nav class="crumbs reveal" aria-label="Breadcrumb"><a href="index.html">Home</a><span aria-hidden="true">/</span><a href="blog.html">Blog</a></nav>
+    <p class="eyebrow reveal">SwiftData + CloudKit</p>
+    <h1 class="reveal" data-d="1">SwiftData, CloudKit and the missing <em>_ckAsset</em> field</h1>
+    <p class="article-meta reveal" data-d="2"><time datetime="2026-09-16">September 16, 2026</time>, 7 min read</p>
+  </div>
+</header>
+
+<div class="article">
+  <div class="wrap">
+    <figure class="figure reveal">
+      <img src="assets/blog/ckasset-01-cover.jpg" width="1200" height="675" alt="Sync stalled in production. No crash. No error. The cause was 4 bytes.">
+    </figure>
+
+    <div class="prose">
+      <div class="summary">
+        <p class="kicker">In short</p>
+        <ul>
+          <li><strong>Who it's for:</strong> you build an iOS app with SwiftData and sync it through iCloud with CloudKit, and at least one model stores files or images with <code>@Attribute(.externalStorage)</code>.</li>
+          <li><strong>The problem:</strong> that attribute needs two fields in the CloudKit Production schema, and the second one only appears if you test with a large file. If it's missing, sync stops silently for anyone who saves a real file.</li>
+          <li><strong>What you'll take away:</strong> a two-minute check to see if your app is exposed today, a simple way to prevent it, and the checklist I now follow before every release.</li>
+        </ul>
+      </div>
+
+      <h2>Why this bug is nasty</h2>
+      <p>Most bugs announce themselves: a crash report, an error in the console, a one-star review. This one doesn't. The app keeps working on the device. The user keeps adding data. It just never reaches their other devices, and nothing tells them.</p>
+      <p>That's what happened to <a href="https://apps.apple.com/it/app/quillino-gestione-affitti/id6774200347">Quillino</a>, my app for people who rent out a property or two. It's built with SwiftUI, stores data with SwiftData and syncs it to the user's iCloud with CloudKit. For people who rely on the app to keep track of rent across an iPhone and an iPad, "sync silently stopped" is about the worst thing that can happen, because they only notice when data they expect isn't there.</p>
+
+      <h2>First, how CloudKit handles your schema</h2>
+      <p>If you've only ever turned on the iCloud capability and let SwiftData do the rest, this part is easy to miss.</p>
+      <p>CloudKit keeps a <strong>schema</strong> for your app: the list of record types and fields it accepts. SwiftData creates these from your <code>@Model</code> classes (a model called <code>Expense</code> becomes a record type called <code>CD_Expense</code>, a property <code>amount</code> becomes a field <code>CD_amount</code>).</p>
+      <p>There are two copies of that schema, in two environments:</p>
+      <ul>
+        <li><strong>Development</strong> is used by builds you run from Xcode. It's permissive: when the app writes a field that doesn't exist yet, CloudKit simply adds it.</li>
+        <li><strong>Production</strong> is used by TestFlight and App Store builds. It's strict: it only accepts fields that are already in its schema. To add them, you open the CloudKit Console and <strong>deploy</strong> the Development schema to Production. Deployed fields can't be removed later.</li>
+      </ul>
+      <p>So if you add a property, test it from Xcode and ship, everything looks fine on your device, while Production still doesn't know the new field. When a user's app tries to save it, CloudKit rejects the record. SwiftData retries, gets rejected again, and that record blocks the queue: the changes behind it don't sync either.</p>
+      <p>This happened to me twice, with two different fields. The fix for the first case is a habit: <strong>deploy the schema to Production before every TestFlight that changes a model.</strong> But that habit alone wasn't enough.</p>
+
+      <h2>The catch: you can only deploy what Development has seen</h2>
+      <p>The Development schema only contains fields the app has actually written at least once. An optional property that's always <code>nil</code> while you test never gets written, so it never appears in Development, so it's never deployed. Then a real user fills it in.</p>
+      <p>My answer was a <strong>schema seeder</strong>: a small piece of debug-only code that, when I launch the app with a specific flag, creates one object of every model with every property filled in, and saves it. Sync pushes those objects to Development, so every field shows up there. Then I deploy.</p>
+      <p>To make sure I don't forget to update it, a unit test counts the properties of each model and fails if one isn't covered by the seeder. The first time I ran it, it found two fields I had missed by hand.</p>
+
+      <h2>The field I still didn't have</h2>
+      <p>Some of Quillino's models store files: photos of expense receipts, documents attached to a tenant. In SwiftData you mark those properties so the data is kept outside the main database:</p>
+    </div>
+
+    <figure class="figure reveal">
+      <img src="assets/blog/ckasset-08-code.jpg" width="1200" height="675" loading="lazy" alt="Swift code: a SwiftData @Model class with @Attribute(.externalStorage) var fileData: Data?, and comments saying the schema seed wrote only a few bytes there.">
+    </figure>
+
+    <div class="prose">
+      <p>My seeder put a few bytes in those properties. It only had to be "not nil", after all. The deploy went through and the diff was empty.</p>
+      <p>Then a real receipt photo was saved, and sync stalled again. Same symptom as before, different cause.</p>
+      <p>CloudKit stores this kind of data in <strong>two different ways depending on its size</strong>. Small values stay inline, in a normal Bytes field called, for example, <code>CD_receiptPhotoData</code>. Larger values are uploaded as a separate file, and CloudKit uses a <strong>second field</strong> of type Asset for that, with <code>_ckAsset</code> added to the name: <code>CD_receiptPhotoData_ckAsset</code>.</p>
+      <p>A 4-byte test value is always small, so CloudKit only ever created the first field. The second one never existed in Development, so it was never deployed, so the first real photo was rejected by Production.</p>
+    </div>
+
+    <figure class="figure reveal">
+      <img src="assets/blog/ckasset-10-ckasset.jpg" width="1200" height="675" loading="lazy" alt="Comparison. Seed with 4 bytes: only the Bytes field reaches Production, the _ckAsset field is missing and sync stalls. Seed with 3 MB: both the Bytes and the Asset field exist and real files sync.">
+      <figcaption>One <code>.externalStorage</code> attribute, two fields in the CloudKit schema.</figcaption>
+    </figure>
+
+    <div class="prose">
+      <h2>Are you affected? A two-minute check</h2>
+      <ol>
+        <li>In Xcode, search your project for <code>.externalStorage</code> and note each property that uses it.</li>
+        <li>Open the <a href="https://icloud.developer.apple.com/">CloudKit Console</a>, pick your container, and switch to the <strong>Production</strong> environment.</li>
+        <li>Under the schema's record types, open the type for each of those models (<code>CD_</code> plus the model name).</li>
+        <li>For each property, look for <strong>both</strong> fields: <code>CD_propertyName</code> and <code>CD_propertyName_ckAsset</code>.</li>
+      </ol>
+      <p>If the <code>_ckAsset</code> one is missing, you're exposed: the first user who saves a large enough file will stall their own sync. The fix is below.</p>
+
+      <h2>How to fix it and keep it fixed</h2>
+      <p>First, get the field into Production. You can add it by hand in the Console for an urgent case, as I did for receipts, but the reliable way is to let the seeder create it.</p>
+      <p>The change is small: for every <code>.externalStorage</code> property, the seeder writes a large value. I use 3 MB, well above the point where CloudKit switches to an Asset. A simplified version of the idea:</p>
+      <pre><code>#if DEBUG
+// Launched with the -cloudKitSchemaSeed argument, against Development.
+@MainActor
+func seedCloudKitSchema(in context: ModelContext) {
+    let receipt = Expense()
+    receipt.amount = 12.5                 // every property gets a non-default value
+    receipt.note = "Schema seed"
+    receipt.receiptPhotoData = largeBlob() // big enough to create the _ckAsset field
+    context.insert(receipt)
+    try? context.save()
+}
+
+private func largeBlob(megabytes: Int = 3) -&gt; Data {
+    Data((0..&lt;megabytes * 1_000_000).map { _ in UInt8.random(in: 0...255) })
+}
+#endif</code></pre>
+      <p>Run it from Xcode on a real device, wait for sync to finish, and check in the Console (Development) that the <code>_ckAsset</code> fields now exist. Then deploy to Production.</p>
+      <p>When I did this, the deploy diff showed that a second field was missing too: <code>CD_fileData_ckAsset</code>, used for tenant documents. I found it in the Console instead of hearing about it from a user.</p>
+      <p>Last, protect the fix from your future self. I added a test that fails if the seed values for these properties ever become small again:</p>
+      <pre><code>testExternalStorageSeedBlobsAreLargeEnoughForAssetRepresentation</code></pre>
+      <p>The name is long on purpose. When it fails, it explains itself.</p>
+
+      <h2>One warning before you run a seeder</h2>
+      <p>Don't run it on the iPhone that holds your real data with your personal iCloud account. Switching between Development and Production data on the same device made CloudKit deliver records again, and since SwiftData with CloudKit doesn't support <code>@Attribute(.unique)</code>, I ended up with duplicate properties in my own app. After seeding, delete the seed records in the Console and reinstall the app before archiving a build. A test device or a separate iCloud account avoids the problem entirely.</p>
+
+      <h2>What changed for me</h2>
+      <p>Before, I found out whether the schema was complete when sync broke. Now it's a routine that ends with a clear yes or no before the build ships.</p>
+      <ul>
+        <li><strong>Missing fields show up at deploy time, not in production.</strong> The second deploy has to come back empty, and when it doesn't, I know exactly which field is missing.</li>
+        <li><strong>Forgetting is caught by tests.</strong> Adding a property without seeding it, or shrinking a blob, makes a test fail instead of reaching users.</li>
+        <li><strong>The size trap is gone for good.</strong> Every <code>.externalStorage</code> property is exercised with a realistic file, which is how users actually use it.</li>
+      </ul>
+
+      <h2>The checklist</h2>
+      <ol>
+        <li>Changed a <code>@Model</code>? Bump your schema revision number.</li>
+        <li>Seed every property with a non-default value, and <code>.externalStorage</code> properties with a large blob.</li>
+        <li>Run the seed on a device, wait for sync, confirm the new fields in the Development schema.</li>
+        <li>Deploy to Production. Deploy again: the diff must be empty.</li>
+        <li>Only then send the build to TestFlight.</li>
+      </ol>
+      <p>Apple can change size thresholds and field naming between versions of iOS and SwiftData, so check what you see in your own Console rather than trusting exact numbers.</p>
+
+      <div class="callout-end">
+        <h2>Want the whole method?</h2>
+        <p>This incident, the seeder approach, schema versioning and the rules behind Quillino's token-based design system are collected in the <a href="design-system-architecture.html">Design system and architecture</a> pack. You load it into Claude, Cursor, Copilot or whichever AI assistant you use, and it walks you through the same checks before your next release.</p>
+        <a class="btn" href="design-system-architecture.html">See the pack <span class="arr" aria-hidden="true">&rarr;</span></a>
+      </div>
+    </div>
+  </div>
+</div>
+</article>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="footer-statement">
+      <h2>Got a question, <br>or found a bug?</h2>
+      <a class="footer-email" href="mailto:quillino.support@gmail.com?subject=Ryuubi%20Studio">quillino.support@gmail.com</a>
+    </div>
+    <nav aria-label="Footer">
+      <a href="skills.html">Skills</a>
+      <a href="templates.html">Templates</a>
+      <a href="blog.html">Blog</a>
+      <a href="license.html">License</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="https://www.etsy.com/shop/RyuubiStudio">Etsy shop</a>
+      <button class="linklike" type="button" data-cookie-settings hidden>Cookie settings</button>
+    </nav>
+  </div>
+</footer>
+
+<div class="consent" data-consent role="dialog" aria-labelledby="consent-title" hidden>
+  <h2 id="consent-title">A quick question</h2>
+  <p>Can I use Google Analytics to count visits? It sets cookies, and it only loads if you say yes. <a class="link" href="privacy.html">Privacy</a></p>
+  <div class="row">
+    <button class="btn ghost" type="button" data-reject>No thanks</button>
+    <button class="btn ghost" type="button" data-accept>Accept</button>
+  </div>
+</div>
+</body>
+</html>
